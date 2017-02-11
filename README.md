@@ -34,6 +34,46 @@ Di seguito una breve descrizione:
 * **javax.json-api**: interfacce previste delle specifiche Json Processing
 * **javax.json** (org.glassfish): implementazione javax.json
 
+## Configure Servlet
+Per poter utilizzare l'implementazione Jersey, è possibile utilizzare una **servlet** oppure un **listener**, che Jersey mette a disposizione per gestire le risorse. Nel progetto è stata utilizzata la prima soluzione.
+
+Inoltre è stato scelto di utilizzare il *package-scanning* come soluzione per trovare le classi annotate come risorse, attraverso l'utilizzo del provider **jersey.config.server.provider.packages**.
+
+
+```	xml
+	<servlet>
+		<servlet-name>MyApplication</servlet-name>
+		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+		<init-param>
+			<param-name>jersey.config.server.provider.packages</param-name>
+			<param-value>it.test</param-value>
+		</init-param>
+		<init-param>
+			<param-name>jersey.config.server.provider.scanning.recursive</param-name>
+			<param-value>false</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MyApplication</servlet-name>
+		<url-pattern>/api/*</url-pattern>
+	</servlet-mapping>
+```		
+
+## Resource definition
+Per poter definire le risorse sono state utilizzate alcune delle annotazioni visibili nelle specifiche JAX-RS. In particolare:
+
+* @Path
+* @GET
+* @Produces
+* @PathParam
+* @QueryParam
+
+Inoltre per poter creare il JSON in output e stato utilizzato JsonObject.
+
+
+
+
+
 
 
 

@@ -8,7 +8,7 @@ In questo esempio si farà riferimento alle seguenti tecnologie:
 2. **Jersey Implementation 2.25** [link to Jersey Guide](https://jersey.java.net/documentation/latest/user-guide.html)
 3. Json Processing implementation **JSONP** [link JSON Processing](https://jsonp.java.net/download.html) 
 
-
+## Le dependencies
 Il progetto è stato creato come progetto Maven base e sono state aggiunge le seguenti **dependencies**:
 
 ```xml
@@ -28,6 +28,11 @@ Il progetto è stato creato come progetto Maven base e sono state aggiunge le se
 			<version>1.0.4</version>
 		</dependency>
 ```	
+Di seguito una breve descrizione:
+
+* **jersey-container-servlet**: implementazione delle specifiche JAX-RS.
+* **javax.json-api**: interfacce previste delle specifiche Json Processing
+* **javax.json** (org.glassfish): implementazione javax.json
 
 
 

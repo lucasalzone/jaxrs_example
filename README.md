@@ -8,6 +8,11 @@ In questo esempio si farà riferimento alle seguenti tecnologie:
 2. **Jersey Implementation 2.25** [link to Jersey Guide](https://jersey.java.net/documentation/latest/user-guide.html)
 3. Json Processing implementation **JSONP** [link JSON Processing](https://jsonp.java.net/download.html) 
 
+## Download esempio
+**GitHub** [link to JSR339](https://github.com/lucasalzone/jaxrs_example)
+
+
+
 ## Le dependencies
 Il progetto è stato creato come progetto Maven base e sono state aggiunge le seguenti **dependencies**:
 

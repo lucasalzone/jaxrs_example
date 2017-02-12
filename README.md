@@ -9,7 +9,7 @@ In questo esempio si farà riferimento alle seguenti tecnologie:
 3. Json Processing implementation **JSONP** [link JSON Processing](https://jsonp.java.net/download.html) 
 
 ## Download esempio
-**GitHub** [link to JSR339](https://github.com/lucasalzone/jaxrs_example)
+**GitHub** [link example source code](https://github.com/lucasalzone/jaxrs_example)
 
 
 

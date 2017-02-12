@@ -32,7 +32,7 @@ public class HelloWorld {
 	@GET
 	@Path("/utenti/{user}")
 	@Produces("application/json")
-	public String getUtenti(@PathParam("user") String user, 
+	public String getUtente(@PathParam("user") String user, 
 			@QueryParam("age") int age,
 			@QueryParam("street") String street) {
 		//TODO call method to populate JsonObject whit user

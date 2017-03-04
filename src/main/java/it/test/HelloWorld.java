@@ -7,6 +7,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path("hello")
 public class HelloWorld {
@@ -19,7 +21,7 @@ public class HelloWorld {
 	// subpath
 	@GET
 	@Path("/utenti")
-	@Produces("application/json")
+	@Produces(MediaType.APPLICATION_JSON)
 	public String getUtenti() {
 		return "[{'user':'luca'},{'user':'francesco'},{'user':'gianni'},{'user':'marcello'},{'user':'giovanni'}]";
 	}
@@ -31,8 +33,8 @@ public class HelloWorld {
 	 */
 	@GET
 	@Path("/utenti/{user}")
-	@Produces("application/json")
-	public String getUtente(@PathParam("user") String user, 
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getUtente(@PathParam("user") String user, 
 			@QueryParam("age") int age,
 			@QueryParam("street") String street) {
 		//TODO call method to populate JsonObject whit user
@@ -54,6 +56,10 @@ public class HelloWorld {
 			             .add("type", "fax")
 			             .add("number", "646 555-4567")))
 			     .build();
-		return value.toString(); 
+		return Response.ok().entity(value.toString())
+				.header("Access-Control-Allow-Origin", "*")
+				.header("Access-Control-Allow-Credentials", "true")
+				.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
+				.build();
 	}
 }

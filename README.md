@@ -126,7 +126,77 @@ public class HelloWorldTest extends JerseyTest{
 }
 ```
 
+***
 
+# Abilitare il CROSS DOMAIN sui servizi RESTful.
+In questa sezione vedremo come abilitare l'accesso da domini differenti ad i nostri servizi restful.
+
+## Return Type
+Secondo la specifica JAX-RS, possiamo fornire come risultato di una chiamata i seguenti tipi:
+
+|TYPE| DESCRIZIONE| 
+|--- | ---|
+|GenericEntity<T>| Tipo generico| 
+|Response | Response generica |
+|altro| Qualsiasi cosa |
+
+
+Nei primo caso abbiamo un'oggetto che vincola lo sviluppatore a produrre un oggetto tipizzato ben definito. Il secondo caso ci permette di decidere a runtime il tipo di oggeto da passare. In ogni caso questi due TYPE previsti dalla specifica contengono delle informazioni e dei comportamenti aggiuntivi.
+Infatti con essi è possibile definire anche attributi specifici, come l'header ed inoltre vengono gestiti gli stati di ritorno in maniera esplicita (status).  
+Questa particolare caratteristica ci permetterà di fornire in risposta ad una chiamata dei parametri specifici dell'header e dunque anche di specificare il funzionamento del CROSS DOMAIN.
+
+## Definizione dell' header
+Per poter abilitare il client (Browser) a vedere le informazioni presenti nel servizio, dovremmo impostare i seguenti parametri nell'header dello stesso. 
+
+```
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Methods: GET, POST, DELETE, PUT
+```
+
+Il primo parametro _Access-Control-Allow-Origin__ definisce quale/quali sono gli host che possono effettuare le chiamate.
+Il secondo definisce se è necessario o meno fornire delle credenziali per poter accedere.
+Mentre il terzo ci dice con quali metodi sarà possibile utilizzare il servizio.
+
+## Impostazione Response
+Il nostro servizio JAX-RS, dunque potrà abilitare tutti i client aggiungendo le informazioni dell'header nella risposta, come mostrato di seguito:
+
+```java
+
+	@GET
+	@Path("/utenti/{user}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getUtente(@PathParam("user") String user, 
+			@QueryParam("age") int age,
+			@QueryParam("street") String street) {
+		...
+		//EXAMPLE from API Reference.
+		JsonObject value = Json.createObjectBuilder()
+			     .add("firstName", user)
+			     .add("lastName", "Smith")
+			     .add("age", age)
+			     .add("address", Json.createObjectBuilder()
+			         .add("streetAddress", street!=null?street:"")
+			         .add("city", "New York")
+			         .add("state", "NY")
+			         .add("postalCode", "10021"))
+			     .add("phoneNumber", Json.createArrayBuilder()
+			         .add(Json.createObjectBuilder()
+			             .add("type", "home")
+			             .add("number", "212 555-1234"))
+			         .add(Json.createObjectBuilder()
+			             .add("type", "fax")
+			             .add("number", "646 555-4567")))
+			     .build();
+		return Response.ok().entity(value.toString())
+				.header("Access-Control-Allow-Origin", "*")
+				.header("Access-Control-Allow-Credentials", "true")
+				.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
+				.build();
+	}
+	
+```
+ 
 
 
 

@@ -1,8 +1,13 @@
 package it.test;
 
-import javax.json.Json;
-import javax.json.JsonObject;
+import java.io.IOException;
+import java.util.logging.Logger;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -10,56 +15,79 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
+import it.test.dto.User;
+
 @Path("hello")
 public class HelloWorld {
-	@GET
-	@Produces("text/plain")
-	public String getHello() {
-		return "ciao Mondo";
-	}
 
-	// subpath
+	private static final Logger LOGGER = Logger.getLogger(HelloWorld.class.getName());
+	
 	@GET
 	@Path("/utenti")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getUtenti() {
-		return "[{'user':'luca'},{'user':'francesco'},{'user':'gianni'},{'user':'marcello'},{'user':'giovanni'}]";
+	public Response getUtenti() throws JsonProcessingException {
+		LOGGER.info("getUtenti");
+		return Response.ok().entity(ParserUtility.parseObject(Users.getSingleton().get()))
+				.header("Access-Control-Allow-Origin", "*")
+				.header("Access-Control-Allow-Credentials", "true")
+				.header("Access-Control-Allow-Methods", "GET, OPTION, POST, DELETE, PUT")
+				.build();
 	}
 
-	/**
-	 * Example of resource with url parameter and query parameter and utilization of JsonObject to create 
-	 * @param user
-	 * @return
-	 */
 	@GET
-	@Path("/utenti/{user}")
+	@Path("/utenti/{name}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getUtente(@PathParam("user") String user, 
-			@QueryParam("age") int age,
-			@QueryParam("street") String street) {
-		//TODO call method to populate JsonObject whit user
-		//EXAMPLE from API Reference.
-		JsonObject value = Json.createObjectBuilder()
-			     .add("firstName", user)
-			     .add("lastName", "Smith")
-			     .add("age", age)
-			     .add("address", Json.createObjectBuilder()
-			         .add("streetAddress", street!=null?street:"")
-			         .add("city", "New York")
-			         .add("state", "NY")
-			         .add("postalCode", "10021"))
-			     .add("phoneNumber", Json.createArrayBuilder()
-			         .add(Json.createObjectBuilder()
-			             .add("type", "home")
-			             .add("number", "212 555-1234"))
-			         .add(Json.createObjectBuilder()
-			             .add("type", "fax")
-			             .add("number", "646 555-4567")))
-			     .build();
-		return Response.ok().entity(value.toString())
+	public Response getUtente(@PathParam("name") String user) throws JsonProcessingException {
+		LOGGER.info("getUtente");
+		return Response.ok().entity(ParserUtility.parseObject(Users.getSingleton().getByName(user)))
 				.header("Access-Control-Allow-Origin", "*")
 				.header("Access-Control-Allow-Credentials", "true")
 				.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
+				.build();
+	}
+
+	//----------------------------------------------------------------------------------------------------
+	@POST
+	@Path("/utenti") 
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response updateUtente(String user) throws JsonParseException, JsonMappingException, IOException {
+		LOGGER.info("updateUtente");
+		Users.getSingleton().add(ParserUtility.parseString(user, User.class));
+		return Response.ok().entity(ParserUtility.parseObject(Result.build().setError(false)))
+				.header("Access-Control-Allow-Origin", "*")
+				.header("Access-Control-Allow-Credentials", "true")
+				.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+				.build();
+	}
+
+	@DELETE
+	@Path("/utenti") 
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response deleteUtente(@QueryParam("user") String user) throws JsonParseException, JsonMappingException, IOException {
+		LOGGER.info("deleteUtente");
+		Users.getSingleton().removeByName((ParserUtility.parseString(user, User.class)).getName());
+		return Response.ok().entity(ParserUtility.parseObject(Result.build().setError(false)))
+				.header("Access-Control-Allow-Origin", "*")
+				.header("Access-Control-Allow-Credentials", "true")
+				.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+				.build();
+	}
+	
+	//----------------------------------------------------------------------------------------------------
+	@OPTIONS
+	@Path("/utenti") 
+	public Response option() throws JsonParseException, JsonMappingException, IOException {
+		LOGGER.info("option");
+		return Response.ok().entity("success")
+				.allow("POST", "GET", "PUT", "UPDATE", "OPTIONS", "HEAD", "DELETE")
+				.header("Access-Control-Allow-Origin", "*")
+				.header("Access-Control-Allow-Credentials", "true")
+				.header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE,DELETE, OPTIONS, HEAD")
+				.header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With")
 				.build();
 	}
 }
